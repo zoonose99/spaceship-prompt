@@ -7,7 +7,7 @@
 
 # Current version of Spaceship
 # Useful for issue reporting
-export SPACESHIP_VERSION='3.0.3'
+export SPACESHIP_VERSION='3.1.0'
 
 # Common-used variable for new line separator
 NEWLINE='
@@ -69,7 +69,7 @@ if [ -z "$SPACESHIP_PROMPT_ORDER" ]; then
     line_sep      # Line break
     battery       # Battery level and status
     vi_mode       # Vi-mode indicator
-    jobs          # Backgound jobs indicator
+    jobs          # Background jobs indicator
     exit_code     # Exit code section
     char          # Prompt character
   )
@@ -84,7 +84,7 @@ fi
 # PROMPT
 SPACESHIP_PROMPT_ADD_NEWLINE="${SPACESHIP_PROMPT_ADD_NEWLINE=true}"
 SPACESHIP_PROMPT_SEPARATE_LINE="${SPACESHIP_PROMPT_SEPARATE_LINE=true}"
-SPACESHIP_PROMPT_FIRST_PREFIX_SHOW="${SPACESHIP_PROMPT_FIRST_PREFIX=false}"
+SPACESHIP_PROMPT_FIRST_PREFIX_SHOW="${SPACESHIP_PROMPT_FIRST_PREFIX_SHOW=false}"
 SPACESHIP_PROMPT_PREFIXES_SHOW="${SPACESHIP_PROMPT_PREFIXES_SHOW=true}"
 SPACESHIP_PROMPT_SUFFIXES_SHOW="${SPACESHIP_PROMPT_SUFFIXES_SHOW=true}"
 SPACESHIP_PROMPT_DEFAULT_PREFIX="${SPACESHIP_PROMPT_DEFAULT_PREFIX="via "}"
