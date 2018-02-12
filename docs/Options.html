@@ -2,12 +2,12 @@
 <!DOCTYPE HTML>
 <html lang="" >
     <head>
-        <title>Options · Spaceship ZSH</title>
         <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>Options · Spaceship ZSH</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="GitBook 3.1.0">
+        <meta name="generator" content="GitBook 3.2.3">
         
         
         
@@ -906,7 +906,7 @@
                                 
                                 <h2 id="options">Options</h2>
 <p>You have ability to customize or disable specific elements of Spaceship. All options must be overridden in your <code>.zshrc</code> file <strong>after</strong> the theme.</p>
-<p>Colors for sections can be <a href="https://wiki.archlinux.org/index.php/zsh#Colors" _target="blank">basic colors</a> or <a href="https://upload.wikimedia.org/wikipedia/commons/1/15/Xterm_256color_chart.svg" _target="blank">color codes</a>.</p>
+<p>Colors for sections can be <a href="https://wiki.archlinux.org/index.php/zsh#Colors" target="_blank">basic colors</a> or <a href="https://upload.wikimedia.org/wikipedia/commons/1/15/Xterm_256color_chart.svg" target="_blank">color codes</a>.</p>
 <p><strong>Note:</strong> the symbol <code>&#xB7;</code> in this document represents a regular space character <code> </code>, it is used to clearly indicate when an option default value starts or ends with a space.</p>
 <h3 id="order">Order</h3>
 <p>You can specify the order of prompt section using <code>SPACESHIP_PROMPT_ORDER</code> option. Use Zsh array syntax to define your own prompt order.</p>
@@ -942,7 +942,7 @@
   line_sep      <span class="hljs-comment"># Line break</span>
   battery       <span class="hljs-comment"># Battery level and status</span>
   vi_mode       <span class="hljs-comment"># Vi-mode indicator</span>
-  <span class="hljs-built_in">jobs</span>          <span class="hljs-comment"># Background jobs indicator</span>
+  <span class="hljs-built_in">jobs</span>          <span class="hljs-comment"># Backgound jobs indicator</span>
   <span class="hljs-built_in">exit</span>_code     <span class="hljs-comment"># Exit code section</span>
   char          <span class="hljs-comment"># Prompt character</span>
 )
@@ -1072,7 +1072,7 @@
 <tr>
 <td style="text-align:left"><code>SPACESHIP_TIME_FORMAT</code></td>
 <td style="text-align:center"><code>false</code></td>
-<td>Custom date formatting <a href="http://zsh.sourceforge.net/Doc/Release/Prompt-Expansion.html#Date-and-time" _target="blank">ZSH date formats</a></td>
+<td>Custom date formatting <a href="http://zsh.sourceforge.net/Doc/Release/Prompt-Expansion.html#Date-and-time" target="_blank">ZSH date formats</a></td>
 </tr>
 <tr>
 <td style="text-align:left"><code>SPACESHIP_TIME_12HR</code></td>
@@ -1168,11 +1168,6 @@
 <td>Show host section (<code>true</code>, <code>false</code> or <code>always</code>)</td>
 </tr>
 <tr>
-<td style="text-align:left"><code>SPACESHIP_HOST_SHOW_FULL</code></td>
-<td style="text-align:center"><code>false</code></td>
-<td>Show full hostname section (<code>true</code>, <code>false</code>)</td>
-</tr>
-<tr>
 <td style="text-align:left"><code>SPACESHIP_HOST_PREFIX</code></td>
 <td style="text-align:center"><code>at&#xB7;</code></td>
 <td>Prefix before the connected SSH machine name</td>
@@ -1266,7 +1261,7 @@
 <tr>
 <td style="text-align:left"><code>SPACESHIP_GIT_SYMBOL</code></td>
 <td style="text-align:center"><img src="https://user-images.githubusercontent.com/3459374/34947621-4f324a92-fa13-11e7-9b99-cdba2cdda6b9.png" alt="&#xE0A0;&#xB7;"></td>
-<td>Character to be shown before Git section (requires <a href="https://github.com/powerline/fonts" _target="blank">powerline patched font</a></td>
+<td>Character to be shown before Git section (requires [powerline patched font][powerline])</td>
 </tr>
 </tbody>
 </table>
@@ -1505,7 +1500,7 @@
 </table>
 <h3 id="package-version-package">Package version (<code>package</code>)</h3>
 <blockquote>
-<p>Works only for <a href="https://www.npmjs.com/" _target="blank">npm</a> at the moment. Please, help us improve this section!</p>
+<p>Works only for <a href="https://www.npmjs.com/" target="_blank">npm</a> at the moment. Please, help us improve this section!</p>
 </blockquote>
 <p>Package version is shown when repository is a package (e.g. contains a <code>package.json</code> file).</p>
 <blockquote>
@@ -1987,7 +1982,7 @@
 </tbody>
 </table>
 <h3 id="amazon-web-services-aws-aws">Amazon Web Services (AWS) (<code>aws</code>)</h3>
-<p>Shows selected Amazon Web Services profile using &apos;<a href="http://docs.aws.amazon.com/cli/latest/userguide/cli-multiple-profiles.html" _target="blank">named profiles</a>&apos;.</p>
+<p>Shows selected Amazon Web Services profile using &apos;<a href="http://docs.aws.amazon.com/cli/latest/userguide/cli-multiple-profiles.html" target="_blank">named profiles</a>&apos;.</p>
 <table>
 <thead>
 <tr>
@@ -2285,7 +2280,7 @@
 </tbody>
 </table>
 <h3 id="battery-battery">Battery (<code>battery</code>)</h3>
-<p>By default, Battery section is shown only if battery level is below <code>SPACESHIP_BATTERY_THRESHOLD</code> (default: 10%).</p>
+<p>By default, Battery section is shown only if battery level is below <code>SPACESHIP_BATTERY_THRESHOLD</code> (default: 10%) or it&apos;s fully charged.</p>
 <table>
 <thead>
 <tr>
@@ -2298,7 +2293,7 @@
 <tr>
 <td style="text-align:left"><code>SPACESHIP_BATTERY_SHOW</code></td>
 <td style="text-align:center"><code>true</code></td>
-<td>Show battery section or not (<code>true</code>, <code>false</code>, <code>always</code> or <code>charged</code>)</td>
+<td>Show battery section or not (<code>true</code>, <code>false</code>, <code>always</code> or <code>low</code>)</td>
 </tr>
 <tr>
 <td style="text-align:left"><code>SPACESHIP_BATTERY_PREFIX</code></td>
@@ -2359,13 +2354,13 @@
 <td style="text-align:center"><code>true</code></td>
 <td style="text-align:left">Shown</td>
 <td style="text-align:left">Hidden</td>
-<td style="text-align:left">Hidden</td>
+<td style="text-align:left">Shown</td>
 </tr>
 <tr>
-<td style="text-align:center"><code>charged</code></td>
+<td style="text-align:center"><code>low</code></td>
 <td style="text-align:left">Shown</td>
 <td style="text-align:left">Hidden</td>
-<td style="text-align:left">Shown</td>
+<td style="text-align:left">Hidden</td>
 </tr>
 </tbody>
 </table>
@@ -2553,7 +2548,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Options","level":"1.2","depth":1,"next":{"title":"Order","level":"1.2.1","depth":2,"anchor":"#order","path":"docs/Options.md","ref":"docs/Options.md#order","articles":[]},"previous":{"title":"Home","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"plugins":["edit-link","github","github-buttons","anchorjs"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"github":{"url":"https://github.com/denysdovhan/spaceship-prompt/"},"search":{},"lunr":{"maxIndexSize":1000000},"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"github-buttons":{"buttons":[{"user":"denysdovhan","repo":"spaceship-prompt","type":"star","size":"small","count":true}]},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"edit-link":{"base":"https://github.com/denysdovhan/spaceship-prompt/tree/master","label":"Edit This Page"},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"anchorjs":{}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Spaceship ZSH","gitbook":"3.x.x"},"file":{"path":"docs/Options.md","mtime":"2018-01-30T11:01:23.905Z","type":"markdown"},"gitbook":{"version":"3.1.0","time":"2018-01-30T11:02:55.272Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Options","level":"1.2","depth":1,"next":{"title":"Order","level":"1.2.1","depth":2,"anchor":"#order","path":"docs/Options.md","ref":"docs/Options.md#order","articles":[]},"previous":{"title":"Home","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"plugins":["edit-link","github","github-buttons","anchorjs"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"github":{"url":"https://github.com/denysdovhan/spaceship-prompt/"},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"github-buttons":{"buttons":[{"user":"denysdovhan","repo":"spaceship-prompt","type":"star","size":"small","count":true}]},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"edit-link":{"label":"Edit This Page","base":"https://github.com/denysdovhan/spaceship-prompt/tree/master"},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"anchorjs":{}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Spaceship ZSH","gitbook":"3.x.x"},"file":{"path":"docs/Options.md","mtime":"2018-02-12T05:11:49.000Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-02-12T05:51:49.632Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
