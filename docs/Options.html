@@ -1226,6 +1226,11 @@
 <td>Number of folders of cwd to show in prompt, 0 to show all</td>
 </tr>
 <tr>
+<td style="text-align:left"><code>SPACESHIP_DIR_TRUNC_PREFIX</code></td>
+<td style="text-align:center"><code> </code></td>
+<td>Prefix before cwd when it&apos;s truncated. For example <code>&#x2026;/</code> or <code>.../</code>, empty to disable</td>
+</tr>
+<tr>
 <td style="text-align:left"><code>SPACESHIP_DIR_TRUNC_REPO</code></td>
 <td style="text-align:center"><code>true</code></td>
 <td>While in <code>git</code> repo, show only root directory and folders inside it</td>
@@ -1508,7 +1513,7 @@
 <blockquote>
 <p>Works only for <a href="https://www.npmjs.com/" target="_blank">npm</a> at the moment. Please, help us improve this section!</p>
 </blockquote>
-<p>Package version is shown when repository is a package (e.g. contains a <code>package.json</code> file).</p>
+<p>Package version is shown when repository is a package (e.g. contains a <code>package.json</code> file). If no version information is found in <code>package.json</code>, the <code>&#x26A0;</code> symbol will be displayed.</p>
 <blockquote>
 <p><strong>Note:</strong> This is the version of the package you are working on, not the version of package manager itself.</p>
 </blockquote>
@@ -1798,7 +1803,7 @@
 </tbody>
 </table>
 <h3 id="php-php">PHP (<code>php</code>)</h3>
-<p>PHP section is shown only in directories that contain any file with <code>.php</code> extension.</p>
+<p>PHP section is shown only in directories that contain <code>composer.json</code> file, or any other file with <code>.php</code> extension.</p>
 <table>
 <thead>
 <tr>
@@ -1985,6 +1990,11 @@
 <td style="text-align:center"><code>cyan</code></td>
 <td>Color of Docker section</td>
 </tr>
+<tr>
+<td style="text-align:left"><code>SPACESHIP_DOCKER_VERBOSE</code></td>
+<td style="text-align:center"><code>false</code></td>
+<td>Show complete Docker version</td>
+</tr>
 </tbody>
 </table>
 <h3 id="amazon-web-services-aws-aws">Amazon Web Services (AWS) (<code>aws</code>)</h3>
@@ -2049,6 +2059,11 @@
 <td style="text-align:left"><code>SPACESHIP_VENV_SUFFIX</code></td>
 <td style="text-align:center"><code>$SPACESHIP_PROMPT_DEFAULT_SUFFIX</code></td>
 <td>Suffix after the virtualenv section</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>SPACESHIP_VENV_SYMBOL</code></td>
+<td style="text-align:center"><code>&#xB7;</code></td>
+<td>Character to be shown before virtualenv</td>
 </tr>
 <tr>
 <td style="text-align:left"><code>SPACESHIP_VENV_GENERIC_NAMES</code></td>
@@ -2474,6 +2489,21 @@
 <td style="text-align:center"><code>blue</code></td>
 <td>Color of background jobs section</td>
 </tr>
+<tr>
+<td style="text-align:left"><code>SPACESHIP_JOBS_AMOUNT_PREFIX</code></td>
+<td style="text-align:center"><code> </code></td>
+<td>Prefix before the number of jobs (between jobs indicator and jobs amount)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>SPACESHIP_JOBS_AMOUNT_SUFFIX</code></td>
+<td style="text-align:center"><code> </code></td>
+<td>Suffix after the number of jobs</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>SPACESHIP_JOBS_AMOUNT_THRESHOLD</code></td>
+<td style="text-align:center"><code>1</code></td>
+<td>Number of jobs after which job count will be shown</td>
+</tr>
 </tbody>
 </table>
 <h3 id="exit-code-exitcode">Exit code (<code>exit_code</code>)</h3>
@@ -2559,7 +2589,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Options","level":"1.2","depth":1,"next":{"title":"Order","level":"1.2.1","depth":2,"anchor":"#order","path":"docs/Options.md","ref":"docs/Options.md#order","articles":[]},"previous":{"title":"Home","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"plugins":["edit-link","github","github-buttons","anchorjs"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"github":{"url":"https://github.com/denysdovhan/spaceship-prompt/"},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"github-buttons":{"buttons":[{"user":"denysdovhan","repo":"spaceship-prompt","type":"star","size":"small","count":true}]},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"edit-link":{"label":"Edit This Page","base":"https://github.com/denysdovhan/spaceship-prompt/tree/master"},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"anchorjs":{}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Spaceship ZSH","gitbook":"3.x.x"},"file":{"path":"docs/Options.md","mtime":"2018-02-27T10:38:44.000Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-02-27T11:27:37.340Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Options","level":"1.2","depth":1,"next":{"title":"Order","level":"1.2.1","depth":2,"anchor":"#order","path":"docs/Options.md","ref":"docs/Options.md#order","articles":[]},"previous":{"title":"Home","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"plugins":["edit-link","github","github-buttons","anchorjs"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"github":{"url":"https://github.com/denysdovhan/spaceship-prompt/"},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"github-buttons":{"buttons":[{"user":"denysdovhan","repo":"spaceship-prompt","type":"star","size":"small","count":true}]},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"edit-link":{"label":"Edit This Page","base":"https://github.com/denysdovhan/spaceship-prompt/tree/master"},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"anchorjs":{}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Spaceship ZSH","gitbook":"3.x.x"},"file":{"path":"docs/Options.md","mtime":"2018-09-29T07:46:59.680Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-09-29T07:48:55.353Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
@@ -2581,7 +2611,7 @@
         
     
         
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.1/anchor.min.js"></script>
         
     
         
