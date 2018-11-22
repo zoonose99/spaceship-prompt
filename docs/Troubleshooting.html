@@ -569,6 +569,19 @@
     
         <li class="chapter " data-level="1.2.30" data-path="Options.html">
             
+                <a href="Options.html#terraform-workspace-terraform">
+            
+                    
+                    Terraform workspace (terraform)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.31" data-path="Options.html">
+            
                 <a href="Options.html#execution-time-exec_time">
             
                     
@@ -580,7 +593,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.31" data-path="Options.html">
+        <li class="chapter " data-level="1.2.32" data-path="Options.html">
             
                 <a href="Options.html#battery-battery">
             
@@ -593,7 +606,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.32" data-path="Options.html">
+        <li class="chapter " data-level="1.2.33" data-path="Options.html">
             
                 <a href="Options.html#vi-mode-vi_mode">
             
@@ -606,7 +619,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.33" data-path="Options.html">
+        <li class="chapter " data-level="1.2.34" data-path="Options.html">
             
                 <a href="Options.html#jobs-jobs">
             
@@ -619,7 +632,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.34" data-path="Options.html">
+        <li class="chapter " data-level="1.2.35" data-path="Options.html">
             
                 <a href="Options.html#exit-code-exit_code">
             
@@ -969,6 +982,7 @@ SPACESHIP_PROMPT_ORDER=(
   dotnet        <span class="hljs-comment"># .NET section</span>
   <span class="hljs-comment"># ember       # Ember.js section (Disabled)</span>
   kubecontext   <span class="hljs-comment"># Kubectl context section</span>
+  terraform     <span class="hljs-comment"># Terraform workspace section</span>
   <span class="hljs-built_in">exec</span>_time     <span class="hljs-comment"># Execution time</span>
   line_sep      <span class="hljs-comment"># Line break</span>
   battery       <span class="hljs-comment"># Battery level and status</span>
@@ -1067,7 +1081,7 @@ SPACESHIP_PROMPT_ORDER=(
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Troubleshooting","level":"1.5","depth":1,"previous":{"title":"spaceship::union","level":"1.4.11","depth":2,"anchor":"#spaceshipunion-arr1-arr2-","path":"docs/API.md","ref":"docs/API.md#spaceshipunion-arr1-arr2-","articles":[]},"dir":"ltr"},"config":{"plugins":["edit-link","github","github-buttons","anchorjs"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"github":{"url":"https://github.com/denysdovhan/spaceship-prompt/"},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"github-buttons":{"buttons":[{"user":"denysdovhan","repo":"spaceship-prompt","type":"star","size":"small","count":true}]},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"edit-link":{"label":"Edit This Page","base":"https://github.com/denysdovhan/spaceship-prompt/tree/master"},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"anchorjs":{}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Spaceship ZSH","gitbook":"3.x.x"},"file":{"path":"docs/Troubleshooting.md","mtime":"2018-11-22T11:19:28.573Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-11-22T11:21:18.902Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Troubleshooting","level":"1.5","depth":1,"previous":{"title":"spaceship::union","level":"1.4.11","depth":2,"anchor":"#spaceshipunion-arr1-arr2-","path":"docs/API.md","ref":"docs/API.md#spaceshipunion-arr1-arr2-","articles":[]},"dir":"ltr"},"config":{"plugins":["edit-link","github","github-buttons","anchorjs"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"github":{"url":"https://github.com/denysdovhan/spaceship-prompt/"},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"github-buttons":{"buttons":[{"user":"denysdovhan","repo":"spaceship-prompt","type":"star","size":"small","count":true}]},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"edit-link":{"label":"Edit This Page","base":"https://github.com/denysdovhan/spaceship-prompt/tree/master"},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"anchorjs":{}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Spaceship ZSH","gitbook":"3.x.x"},"file":{"path":"docs/Troubleshooting.md","mtime":"2018-11-22T17:29:17.219Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-11-22T17:31:06.591Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
