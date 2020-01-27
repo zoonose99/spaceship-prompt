@@ -41,9 +41,9 @@ testUnboundVariable() {
 #SHUNIT_COLOR='none'
 #. ${TH_SHUNIT}
 EOF
-  ( exec "${SHUNIT_SHELL:-sh}" "${unittestF}" >"${stdoutF}" 2>"${stderrF}" )
+  ( exec "${SHELL:-sh}" "${unittestF}" >"${stdoutF}" 2>"${stderrF}" )
   assertFalse 'expected a non-zero exit value' $?
-  grep '^ASSERT:Unknown failure' "${stdoutF}" >/dev/null
+  grep '^ASSERT:unknown failure' "${stdoutF}" >/dev/null
   assertTrue 'assert message was not generated' $?
   grep '^Ran [0-9]* test' "${stdoutF}" >/dev/null
   assertTrue 'test count message was not generated' $?
@@ -77,7 +77,7 @@ testIssue29() {
 #SHUNIT_TEST_PREFIX='--- '
 #. ${TH_SHUNIT}
 EOF
-  ( exec "${SHUNIT_SHELL:-sh}" "${unittestF}" >"${stdoutF}" 2>"${stderrF}" )
+  ( exec "${SHELL:-sh}" "${unittestF}" >"${stdoutF}" 2>"${stderrF}" )
   grep '^--- test_assert' "${stdoutF}" >/dev/null
   rtrn=$?
   assertEquals "${SHUNIT_TRUE}" "${rtrn}"
@@ -97,7 +97,7 @@ testIssue69() {
 #SHUNIT_COLOR='none'
 #. ${TH_SHUNIT}
 EOF
-    ( exec "${SHUNIT_SHELL:-sh}" "${unittestF}" >"${stdoutF}" 2>"${stderrF}" )
+    ( exec "${SHELL:-sh}" "${unittestF}" >"${stdoutF}" 2>"${stderrF}" )
     grep '^FAILED' "${stdoutF}" >/dev/null
     assertTrue "failure message for ${assert} was not generated" $?
   done
@@ -105,7 +105,7 @@ EOF
 
 # Ensure that test fails if setup/teardown functions fail.
 testIssue77() {
-	unittestF="${SHUNIT_TMPDIR}/unittest"
+  unittestF="${SHUNIT_TMPDIR}/unittest"
   for func in oneTimeSetUp setUp tearDown oneTimeTearDown; do
     sed 's/^#//' >"${unittestF}" <<EOF
 ## Environment failure should end test.
@@ -114,7 +114,7 @@ testIssue77() {
 #SHUNIT_COLOR='none'
 #. ${TH_SHUNIT}
 EOF
-    ( exec "${SHUNIT_SHELL:-sh}" "${unittestF}" >"${stdoutF}" 2>"${stderrF}" )
+    ( exec "${SHELL:-sh}" "${unittestF}" ) >"${stdoutF}" 2>"${stderrF}"
     grep '^FAILED' "${stdoutF}" >/dev/null
     assertTrue "failure of ${func}() did not end test" $?
   done
@@ -135,7 +135,7 @@ testIssue84() {
 #SHUNIT_TEST_PREFIX='--- '
 #. ${TH_SHUNIT}
 EOF
-  ( exec "${SHUNIT_SHELL:-sh}" "${unittestF}" >"${stdoutF}" 2>"${stderrF}" )
+  ( exec "${SHELL:-sh}" "${unittestF}" >"${stdoutF}" 2>"${stderrF}" )
   grep '^FAILED' "${stdoutF}" >/dev/null
   assertTrue "failure message for ${assert} was not generated" $?
 }
@@ -223,16 +223,34 @@ testExtractTestFunctions() {
 #func_with_test_vars() {
 #  testVariable=1234
 #}
+## Function with keyword but no parenthesis
+#function test6 { echo '6'; }
+## Function with keyword but no parenthesis, multi-line
+#function test7 {
+#  echo '7';
+#}
+## Function with no parenthesis, '{' on next line
+#function test8
+#{
+#  echo '8'
+#}
+## Function with hyphenated name
+#test-9() {
+#  echo '9';
+#}
+## Function without parenthesis or keyword
+#test_foobar { echo 'hello world'; }
+## Function with multiple function keywords
+#function function test_test_test() { echo 'lorem'; }
 EOF
 
   actual=`_shunit_extractTestFunctions "${f}"`
-  assertEquals 'testABC test_def testG3 test4 test5' "${actual}"
+  assertEquals 'testABC test_def testG3 test4 test5 test6 test7 test8 test-9' "${actual}"
 }
 
-# Test that certain external commands sometimes "stubbed" by users
-# are escaped. See Issue #54.
-testProtectedCommands() {
-  for c in mkdir rm cat chmod; do
+# Test that certain external commands sometimes "stubbed" by users are escaped.
+testIssue54() {
+  for c in mkdir rm cat chmod sed; do
     grep "^[^#]*${c} " "${TH_SHUNIT}" | grep -qv "command ${c}"
     assertFalse "external call to ${c} not protected somewhere" $?
   done
@@ -242,6 +260,38 @@ testProtectedCommands() {
   assertFalse "call to . not protected somewhere" $?
 }
 
+mock_tput() {
+  if [ -z "${TERM}" ]; then
+    # shellcheck disable=SC2016
+    echo 'tput: No value for $TERM and no -T specified'
+    return 2
+  fi
+  if [ "$1" = 'colors' ]; then
+    echo 256
+    return 0
+  fi
+  return 1
+}
+
+testColors() {
+  while read -r desc cmd colors; do
+    SHUNIT_CMD_TPUT=${cmd}
+    got=`_shunit_colors`
+    want=${colors}
+    assertEquals "${got}" "${want}"
+  done <<'EOF'
+missing missing_tput 16
+mock mock_tput 256
+EOF
+}
+
+testColorsWitoutTERM() {
+  SHUNIT_CMD_TPUT='mock_tput'
+  got=`TERM='' _shunit_colors`
+  want=16
+  assertEquals "${got}" "${want}"
+}
+
 setUp() {
   for f in "${stdoutF}" "${stderrF}"; do
     cp /dev/null "${f}"
@@ -249,6 +299,9 @@ setUp() {
 
   # Reconfigure coloring as some tests override default behavior.
   _shunit_configureColor "${SHUNIT_COLOR_DEFAULT}"
+
+  # shellcheck disable=SC2034,SC2153
+  SHUNIT_CMD_TPUT=${__SHUNIT_CMD_TPUT}
 }
 
 oneTimeSetUp() {

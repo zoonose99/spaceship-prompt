@@ -1,8 +1,9 @@
 #! /bin/sh
 # vim:et:ft=sh:sts=2:sw=2
 #
-# Copyright 2008-2018 Kate Ward. All Rights Reserved.
+# Copyright 2008-2019 Kate Ward. All Rights Reserved.
 # Released under the Apache 2.0 license.
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # shUnit2 -- Unit testing framework for Unix shell scripts.
 # https://github.com/kward/shunit2
@@ -42,18 +43,20 @@ _shunit_fatal() {
 }
 
 # Determine some reasonable command defaults.
+__SHUNIT_CMD_ECHO_ESC='echo -e'
+# shellcheck disable=SC2039
+command [ "`echo -e test`" = '-e test' ] && __SHUNIT_CMD_ECHO_ESC='echo'
+
 __SHUNIT_UNAME_S=`uname -s`
 case "${__SHUNIT_UNAME_S}" in
   BSD) __SHUNIT_CMD_EXPR='gexpr' ;;
   *) __SHUNIT_CMD_EXPR='expr' ;;
 esac
-
-__SHUNIT_CMD_ECHO_ESC='echo -e'
-# shellcheck disable=SC2039
-command [ "`echo -e test`" = '-e test' ] && __SHUNIT_CMD_ECHO_ESC='echo'
+__SHUNIT_CMD_TPUT='tput'
 
 # Commands a user can override if needed.
 SHUNIT_CMD_EXPR=${SHUNIT_CMD_EXPR:-${__SHUNIT_CMD_EXPR}}
+SHUNIT_CMD_TPUT=${SHUNIT_CMD_TPUT:-${__SHUNIT_CMD_TPUT}}
 
 # Enable color output. Options are 'never', 'always', or 'auto'.
 SHUNIT_COLOR=${SHUNIT_COLOR:-auto}
@@ -78,7 +81,8 @@ __SHUNIT_MODE_SOURCED='sourced'
 __SHUNIT_MODE_STANDALONE='standalone'
 __SHUNIT_PARENT=${SHUNIT_PARENT:-$0}
 
-# User provided test prefix -- define SHUNIT_TEST_PREFIX variable.
+# User provided test prefix to display in front of the name of the test being
+# executed. Define by setting the SHUNIT_TEST_PREFIX variable.
 __SHUNIT_TEST_PREFIX=${SHUNIT_TEST_PREFIX:-}
 
 # ANSI colors.
@@ -115,6 +119,7 @@ __shunit_reportGenerated=${SHUNIT_FALSE}  # Is report generated.
 __shunit_script=''  # Filename of unittest script (standalone mode).
 __shunit_skip=${SHUNIT_FALSE}  # Is skipping enabled.
 __shunit_suite=''  # Suite of tests to execute.
+__shunit_clean=${SHUNIT_FALSE}  # _shunit_cleanup() was already called.
 
 # ANSI colors (populated by _shunit_configureColor()).
 __shunit_ansi_none=''
@@ -216,7 +221,7 @@ assertNotEquals() {
   if command [ "${shunit_expected_}" != "${shunit_actual_}" ]; then
     _shunit_assertPass
   else
-    failSame "${shunit_message_}" "$@"
+    failSame "${shunit_message_}" "${shunit_expected_}" "${shunit_actual_}"
     shunit_return=${SHUNIT_FALSE}
   fi
 
@@ -225,6 +230,86 @@ assertNotEquals() {
 }
 # shellcheck disable=SC2016,SC2034
 _ASSERT_NOT_EQUALS_='eval assertNotEquals --lineno "${LINENO:-}"'
+
+# Assert that a container contains a content.
+#
+# Args:
+#   message: string: failure message [optional]
+#   container: string: container to analyze
+#   content: string: content to find
+# Returns:
+#   integer: success (TRUE/FALSE/ERROR constant)
+assertContains() {
+  # shellcheck disable=SC2090
+  ${_SHUNIT_LINENO_}
+  if command [ $# -lt 2 -o $# -gt 3 ]; then
+    _shunit_error "assertContains() requires two or three arguments; $# given"
+    _shunit_assertFail
+    return ${SHUNIT_ERROR}
+  fi
+  _shunit_shouldSkip && return ${SHUNIT_TRUE}
+
+  shunit_message_=${__shunit_lineno}
+  if command [ $# -eq 3 ]; then
+    shunit_message_="${shunit_message_}$1"
+    shift
+  fi
+  shunit_container_=$1
+  shunit_content_=$2
+
+  shunit_return=${SHUNIT_TRUE}
+  if echo "$shunit_container_" | grep -F -- "$shunit_content_" > /dev/null; then
+    _shunit_assertPass
+  else
+    failNotFound "${shunit_message_}" "${shunit_content_}"
+    shunit_return=${SHUNIT_FALSE}
+  fi
+
+  unset shunit_message_ shunit_container_ shunit_content_
+  return ${shunit_return}
+}
+# shellcheck disable=SC2016,SC2034
+_ASSERT_CONTAINS_='eval assertContains --lineno "${LINENO:-}"'
+
+# Assert that a container does not contain a content.
+#
+# Args:
+#   message: string: failure message [optional]
+#   container: string: container to analyze
+#   content: string: content to look for
+# Returns:
+#   integer: success (TRUE/FALSE/ERROR constant)
+assertNotContains() {
+  # shellcheck disable=SC2090
+  ${_SHUNIT_LINENO_}
+  if command [ $# -lt 2 -o $# -gt 3 ]; then
+    _shunit_error "assertNotContains() requires two or three arguments; $# given"
+    _shunit_assertFail
+    return ${SHUNIT_ERROR}
+  fi
+  _shunit_shouldSkip && return ${SHUNIT_TRUE}
+
+  shunit_message_=${__shunit_lineno}
+  if command [ $# -eq 3 ]; then
+    shunit_message_="${shunit_message_}$1"
+    shift
+  fi
+  shunit_container_=$1
+  shunit_content_=$2
+
+  shunit_return=${SHUNIT_TRUE}
+  if echo "$shunit_container_" | grep -F -- "$shunit_content_" > /dev/null; then
+    failFound "${shunit_message_}" "${shunit_content_}"
+    shunit_return=${SHUNIT_FALSE}
+  else
+    _shunit_assertPass
+  fi
+
+  unset shunit_message_ shunit_container_ shunit_content_
+  return ${shunit_return}
+}
+# shellcheck disable=SC2016,SC2034
+_ASSERT_NOT_CONTAINS_='eval assertNotContains --lineno "${LINENO:-}"'
 
 # Assert that a value is null (i.e. an empty string)
 #
@@ -446,7 +531,7 @@ assertFalse() {
   # shellcheck disable=SC2090
   ${_SHUNIT_LINENO_}
   if command [ $# -lt 1 -o $# -gt 2 ]; then
-    _shunit_error "assertFalse() quires one or two arguments; $# given"
+    _shunit_error "assertFalse() requires one or two arguments; $# given"
     _shunit_assertFail
     return ${SHUNIT_ERROR}
   fi
@@ -554,6 +639,69 @@ failNotEquals() {
 }
 # shellcheck disable=SC2016,SC2034
 _FAIL_NOT_EQUALS_='eval failNotEquals --lineno "${LINENO:-}"'
+
+# Records a test failure, stating a value was found.
+#
+# Args:
+#   message: string: failure message [optional]
+#   content: string: found value
+# Returns:
+#   integer: success (TRUE/FALSE/ERROR constant)
+failFound() {
+  # shellcheck disable=SC2090
+  ${_SHUNIT_LINENO_}
+  if command [ $# -lt 1 -o $# -gt 2 ]; then
+    _shunit_error "failFound() requires one or two arguments; $# given"
+    return ${SHUNIT_ERROR}
+  fi
+  _shunit_shouldSkip && return ${SHUNIT_TRUE}
+
+  shunit_message_=${__shunit_lineno}
+  if command [ $# -eq 2 ]; then
+    shunit_message_="${shunit_message_}$1"
+    shift
+  fi
+
+  shunit_message_=${shunit_message_%% }
+  _shunit_assertFail "${shunit_message_:+${shunit_message_} }Found"
+
+  unset shunit_message_
+  return ${SHUNIT_FALSE}
+}
+# shellcheck disable=SC2016,SC2034
+_FAIL_FOUND_='eval failFound --lineno "${LINENO:-}"'
+
+# Records a test failure, stating a content was not found.
+#
+# Args:
+#   message: string: failure message [optional]
+#   content: string: content not found
+# Returns:
+#   integer: success (TRUE/FALSE/ERROR constant)
+failNotFound() {
+  # shellcheck disable=SC2090
+  ${_SHUNIT_LINENO_}
+  if command [ $# -lt 1 -o $# -gt 2 ]; then
+    _shunit_error "failNotFound() requires one or two arguments; $# given"
+    return ${SHUNIT_ERROR}
+  fi
+  _shunit_shouldSkip && return ${SHUNIT_TRUE}
+
+  shunit_message_=${__shunit_lineno}
+  if command [ $# -eq 2 ]; then
+    shunit_message_="${shunit_message_}$1"
+    shift
+  fi
+  shunit_content_=$1
+
+  shunit_message_=${shunit_message_%% }
+  _shunit_assertFail "${shunit_message_:+${shunit_message_} }Not found:<${shunit_content_}>"
+
+  unset shunit_message_ shunit_content_
+  return ${SHUNIT_FALSE}
+}
+# shellcheck disable=SC2016,SC2034
+_FAIL_NOT_FOUND_='eval failNotFound --lineno "${LINENO:-}"'
 
 # Records a test failure, stating two values should have been the same.
 #
@@ -754,7 +902,7 @@ _shunit_mktempDir() {
   # shellcheck disable=SC2039
   if command [ -r '/dev/urandom' -a -x '/usr/bin/od' ]; then
     _shunit_random_=`/usr/bin/od -vAn -N4 -tx4 </dev/urandom \
-        |sed 's/^[^0-9a-f]*//'`
+        |command sed 's/^[^0-9a-f]*//'`
   elif command [ -n "${RANDOM:-}" ]; then
     # $RANDOM works
     _shunit_random_=${RANDOM}${RANDOM}${RANDOM}$$
@@ -801,28 +949,40 @@ EOF
 _shunit_cleanup() {
   _shunit_name_=$1
 
-  case ${_shunit_name_} in
-    EXIT) _shunit_signal_=0 ;;
-    INT) _shunit_signal_=2 ;;
-    TERM) _shunit_signal_=15 ;;
+  case "${_shunit_name_}" in
+    EXIT) ;;
+    INT) _shunit_signal_=130 ;;  # 2+128
+    TERM) _shunit_signal_=143 ;;  # 15+128
     *)
       _shunit_error "unrecognized trap value (${_shunit_name_})"
       _shunit_signal_=0
       ;;
   esac
-
-  # Do our work.
-  command rm -fr "${__shunit_tmpDir}"
-
-  # Exit for all non-EXIT signals.
   if command [ "${_shunit_name_}" != 'EXIT' ]; then
     _shunit_warn "trapped and now handling the (${_shunit_name_}) signal"
-    # Disable EXIT trap.
-    trap 0
-    # Add 128 to signal and exit.
-    exit "`expr "${_shunit_signal_}" + 128`"
-  elif command [ ${__shunit_reportGenerated} -eq ${SHUNIT_FALSE} ] ; then
-    _shunit_assertFail 'Unknown failure encountered running a test'
+  fi
+
+  # Do our work.
+  if command [ ${__shunit_clean} -eq ${SHUNIT_FALSE} ]; then
+    # Ensure tear downs are only called once.
+    __shunit_clean=${SHUNIT_TRUE}
+
+    tearDown
+    command [ $? -eq ${SHUNIT_TRUE} ] \
+        || _shunit_warn "tearDown() returned non-zero return code."
+    oneTimeTearDown
+    command [ $? -eq ${SHUNIT_TRUE} ] \
+        || _shunit_warn "oneTimeTearDown() returned non-zero return code."
+
+    command rm -fr "${__shunit_tmpDir}"
+  fi
+
+  if command [ "${_shunit_name_}" != 'EXIT' ]; then
+    # Handle all non-EXIT signals.
+    trap - 0  # Disable EXIT trap.
+    exit ${_shunit_signal_}
+  elif command [ ${__shunit_reportGenerated} -eq ${SHUNIT_FALSE} ]; then
+    _shunit_assertFail 'unknown failure encountered running a test'
     _shunit_generateReport
     exit ${SHUNIT_ERROR}
   fi
@@ -839,12 +999,7 @@ _shunit_configureColor() {
   case $1 in
     'always') _shunit_color_=${SHUNIT_TRUE} ;;
     'auto')
-      ( exec tput >/dev/null 2>&1 )  # Check for existence of tput command.
-      if command [ $? -lt 127 ]; then
-        _shunit_tput_=`tput colors`
-        # shellcheck disable=SC2166,SC2181
-        command [ $? -eq 0 -a "${_shunit_tput_}" -ge 16 ] && _shunit_color_=${SHUNIT_TRUE}
-      fi
+      command [ "`_shunit_colors`" -ge 8 ] && _shunit_color_=${SHUNIT_TRUE}
       ;;
     'none') ;;
     *) _shunit_fatal "unrecognized color option '$1'" ;;
@@ -868,6 +1023,17 @@ _shunit_configureColor() {
   esac
 
   unset _shunit_color_ _shunit_tput_
+}
+
+# colors returns the number of supported colors for the TERM.
+_shunit_colors() {
+  _shunit_tput_=`${SHUNIT_CMD_TPUT} colors 2>/dev/null`
+  if command [ $? -eq 0 ]; then
+    echo "${_shunit_tput_}"
+  else
+    echo 16
+  fi
+  unset _shunit_tput_
 }
 
 # The actual running of the tests happens here.
@@ -918,9 +1084,11 @@ _shunit_execSuite() {
 # Output:
 #   string: the report of successful and failed tests, as well as totals.
 _shunit_generateReport() {
+  command [ "${__shunit_reportGenerated}" -eq ${SHUNIT_TRUE} ] && return
+
   _shunit_ok_=${SHUNIT_TRUE}
 
-  # If no exit code was provided one, determine an appropriate one.
+  # If no exit code was provided, determine an appropriate one.
   command [ "${__shunit_testsFailed}" -gt 0 \
       -o ${__shunit_testSuccess} -eq ${SHUNIT_FALSE} ] \
           && _shunit_ok_=${SHUNIT_FALSE}
@@ -933,22 +1101,15 @@ _shunit_generateReport() {
     ${__SHUNIT_CMD_ECHO_ESC} "${_shunit_msg_} tests."
   fi
 
-  _shunit_failures_=0
-  _shunit_skipped_=0
-  command [ "${__shunit_assertsFailed}" -gt 0 ] \
-      && _shunit_failures_="failures=${__shunit_assertsFailed}"
-  command [ "${__shunit_assertsSkipped}" -gt 0 ] \
-      && _shunit_skipped_="skipped=${__shunit_assertsSkipped}"
-
   if command [ ${_shunit_ok_} -eq ${SHUNIT_TRUE} ]; then
     _shunit_msg_="${__shunit_ansi_green}OK${__shunit_ansi_none}"
-    command [ "${_shunit_skipped_}" -gt 0 ] \
-        && _shunit_msg_="${_shunit_msg_} (${__shunit_ansi_yellow}${_shunit_skipped_}${__shunit_ansi_none})"
+    command [ "${__shunit_assertsSkipped}" -gt 0 ] \
+        && _shunit_msg_="${_shunit_msg_} (${__shunit_ansi_yellow}skipped=${__shunit_assertsSkipped}${__shunit_ansi_none})"
   else
     _shunit_msg_="${__shunit_ansi_red}FAILED${__shunit_ansi_none}"
-    _shunit_msg_="${_shunit_msg_} (${__shunit_ansi_red}${_shunit_failures_}${__shunit_ansi_none}"
-    command [ "${_shunit_skipped_}" -gt 0 ] \
-        && _shunit_msg_="${_shunit_msg_},${__shunit_ansi_yellow}${_shunit_skipped_}${__shunit_ansi_none}"
+    _shunit_msg_="${_shunit_msg_} (${__shunit_ansi_red}failures=${__shunit_assertsFailed}${__shunit_ansi_none}"
+    command [ "${__shunit_assertsSkipped}" -gt 0 ] \
+        && _shunit_msg_="${_shunit_msg_},${__shunit_ansi_yellow}skipped=${__shunit_assertsSkipped}${__shunit_ansi_none}"
     _shunit_msg_="${_shunit_msg_})"
   fi
 
@@ -956,7 +1117,7 @@ _shunit_generateReport() {
   ${__SHUNIT_CMD_ECHO_ESC} "${_shunit_msg_}"
   __shunit_reportGenerated=${SHUNIT_TRUE}
 
-  unset _shunit_failures_ _shunit_msg_ _shunit_ok_ _shunit_skipped_
+  unset _shunit_msg_ _shunit_ok_
 }
 
 # Test for whether a function should be skipped.
@@ -1042,7 +1203,7 @@ _shunit_escapeCharInStr() {
 
   # Escape the character.
   # shellcheck disable=SC1003,SC2086
-  echo ''${_shunit_s_}'' |sed 's/\'${_shunit_c_}'/\\\'${_shunit_c_}'/g'
+  echo ''${_shunit_s_}'' |command sed 's/\'${_shunit_c_}'/\\\'${_shunit_c_}'/g'
 
   unset _shunit_c_ _shunit_s_
 }
@@ -1079,10 +1240,10 @@ _shunit_extractTestFunctions() {
 
   # Extract the lines with test function names, strip of anything besides the
   # function name, and output everything on a single line.
-  _shunit_regex_='^[ 	]*(function )*test[A-Za-z0-9_]* *\(\)'
+  _shunit_regex_='^\s*((function test[A-Za-z0-9_-]*)|(test[A-Za-z0-9_-]* *\(\)))'
   # shellcheck disable=SC2196
   egrep "${_shunit_regex_}" "${_shunit_script_}" \
-  |sed 's/^[^A-Za-z0-9_]*//;s/^function //;s/\([A-Za-z0-9_]*\).*/\1/g' \
+  |command sed 's/^[^A-Za-z0-9_-]*//;s/^function //;s/\([A-Za-z0-9_-]*\).*/\1/g' \
   |xargs
 
   unset _shunit_regex_ _shunit_script_
@@ -1093,7 +1254,7 @@ _shunit_extractTestFunctions() {
 #
 
 # Determine the operating mode.
-if command [ $# -eq 0 ]; then
+if command [ $# -eq 0 -o "${1:-}" = '--' ]; then
   __shunit_script=${__SHUNIT_PARENT}
   __shunit_mode=${__SHUNIT_MODE_SOURCED}
 else
@@ -1140,11 +1301,24 @@ oneTimeSetUp
 command [ $? -eq ${SHUNIT_TRUE} ] \
     || _shunit_fatal "oneTimeSetUp() returned non-zero return code."
 
-# Execute the suite function defined in the parent test script.
-# DEPRECATED as of 2.1.0.
-suite
+# Command line selected tests or suite selected tests
+if command [ "$#" -ge 2 ]; then
+  # Argument $1 is either the filename of tests or '--'; either way, skip it.
+  shift
+  # Remaining arguments ($2 .. $#) are assumed to be test function names.
+  # Interate through all remaining args in "$@" in a POSIX (likely portable) way.
+  # Helpful tip: https://unix.stackexchange.com/questions/314032/how-to-use-arguments-like-1-2-in-a-for-loop
+  for _shunit_arg_ do
+    suite_addTest "${_shunit_arg_}"
+  done
+  unset _shunit_arg_
+else
+  # Execute the suite function defined in the parent test script.
+  # DEPRECATED as of 2.1.0.
+  suite
+fi
 
-# If no suite function was defined, dynamically build a list of functions.
+# If no tests or suite specified, dynamically build a list of functions.
 if command [ -z "${__shunit_suite}" ]; then
   shunit_funcs_=`_shunit_extractTestFunctions "${__shunit_script}"`
   for shunit_func_ in ${shunit_funcs_}; do
